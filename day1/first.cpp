@@ -20,6 +20,7 @@ int main(int argc, char const *argv[]) {
         int dir = translator[line.substr(0, 1)];
 
         start = (start + dir*step) % MAX;
+        start = (start + MAX) % MAX;
         
         // count number of time zero appears
         if (start == 0)
