@@ -14,28 +14,27 @@ int main(int argc, char const *argv[]) {
     
     int start = 50;
     int code = 0;
-    bool prev = false;
     fh.open(argv[1]);
     
     while (fh >> line) {
         int step = std::stoi(line.substr(1, line.length() - 1));
         int dir = translator[line.substr(0, 1)];
         int temp;
+        int prev = step;
         
+        step %= SIZE;
         temp = start + dir*step;
+        if ((temp > SIZE || temp < 0)) {
+            code += 1 * (start > 0);
+        }
+        
+        code += prev / SIZE; // number of laps 
         start = (start + dir*step) % SIZE;
         start = (start + SIZE) % SIZE;
-        if (temp != start && !prev) {
-            code++;
-            prev = false;
-        }
-        
-        code += step / SIZE;
         // count number of times the needle stays at zero
-        if (start == 0) {
+        if (start == 0)
             code++;
-            prev = true;
-        }
+        
 
         std::cout << line << " " << start << " " << code << "\n";
             
