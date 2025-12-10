@@ -5,17 +5,50 @@
 #include <vector>
 
 
+int check_ranges(std::vector<std::pair<long, long>> ranges, long lb, long ub) {
+    for (int i = 0; i < (int)ranges.size()-1; i++) {
+        // compare lb with saved_upper and ub with saved_lower
+        if (lb <= ranges[i].second+1 && ub >=ranges[i].first-1)
+            return i;
+    }
+
+    return -1; // no index found
+}
+
+void merge_ranges(std::vector<std::pair<long, long>> &ranges, long lb, long ub) {
+    
+    // get range that's going to be modified
+    int i = check_ranges(ranges, lb, ub); 
+    
+    // stop condition
+    if (i == -1)
+        return;
+    
+    // modify the range
+    auto range = ranges.back(); 
+    
+    if (range.first < ranges[i].first)
+        ranges[i].first = range.first;
+    
+    if (range.second > ranges[i].second)
+        ranges[i].second = range.second;
+    
+    ranges.pop_back();
+    merge_ranges(ranges, ranges.back().first, ranges.back().second);
+}
+
+
 int main(int argc, char const *argv[]) {
     std::string line;
     std::ifstream fh;
     std::vector<std::pair<long, long>> ranges; // first = lb and second = ub
-    int total_fresh_ingredients = 0;
+    long total_fresh_ingredients = 0;
 
 
     fh.open(argv[1]);
     while (fh >> line) {
-        // std::cout << line << "\n";
         size_t dash_i;
+        // int range_i;
 
         // catch the ranges
         if ((dash_i = line.find('-')) == std::string::npos)
@@ -23,13 +56,23 @@ int main(int argc, char const *argv[]) {
         
         auto lb_curr = std::stol(line.substr(0, dash_i));
         auto ub_curr = std::stol(line.substr(dash_i+1, line.length()-dash_i-1));
-        
-        ranges.push_back(std::make_pair(lb_curr, ub_curr));
-    }
 
+        // start range collection
+        if (ranges.size() == 0) {
+            ranges.push_back(std::make_pair(lb_curr, ub_curr));
+            continue;
+        }
+        // range_i = check_ranges(ranges, lb_curr, ub_curr);
+        ranges.push_back(std::make_pair(lb_curr, ub_curr));
+        
+        merge_ranges(ranges, lb_curr, ub_curr);
+
+    }
     
-    for (auto p : ranges)
-        std::cout << p.first << " and " << p.second << "\n";
+    for (auto p : ranges) {
+        std::cout << p.first << "-" << p.second << " " << p.second-p.first+1 << "\n";
+        total_fresh_ingredients += p.second - p.first + 1;
+    }
     
     std::cout << total_fresh_ingredients << "\n";    
     
