@@ -3,8 +3,9 @@
 #include <string>
 #include <limits>
 #include <vector>
+#include <algorithm>
 
-
+// funções recursivas ficaram para mais tarde
 int check_ranges(std::vector<std::pair<long, long>> ranges, long lb, long ub) {
     for (int i = 0; i < (int)ranges.size()-1; i++) {
         // compare lb with saved_upper and ub with saved_lower
@@ -65,10 +66,25 @@ int main(int argc, char const *argv[]) {
         // range_i = check_ranges(ranges, lb_curr, ub_curr);
         ranges.push_back(std::make_pair(lb_curr, ub_curr));
         
-        merge_ranges(ranges, lb_curr, ub_curr);
+        // merge_ranges(ranges, lb_curr, ub_curr);
 
     }
+
+    std::sort(ranges.begin(), ranges.end(), [](std::pair<long, long> a, std::pair<long, long> b) 
+                                              {
+                                                return a.first < b.first;
+                                              });
     
+    // std::vector<std::pair<long, long>> compacted_ranges;
+
+    for (size_t i = 0; i < ranges.size()-1; i++) {
+        if (ranges[i].second >= ranges[i+1].first) {
+            ranges[i].second = ranges[i].second > ranges[i+1].second ? ranges[i].second : ranges[i+1].second;
+            ranges.erase(ranges.begin() + (i--) + 1);
+        }
+    }
+    
+
     for (auto p : ranges) {
         std::cout << p.first << "-" << p.second << " " << p.second-p.first+1 << "\n";
         total_fresh_ingredients += p.second - p.first + 1;
