@@ -15,16 +15,14 @@ def cephalopod_math(n_spaces, pos):
             row = row[pos:pos+n_spaces]
             nums[i] += row[i]
 
-    nums = list(map(int, nums[::-1]))
-    # print(nums, ops[pos])
-    return reduce(translator[ops[pos]], nums)  
+    # nums = list(map(int, nums[::-1]))
+    return reduce(translator[ops[pos]], map(int, nums))  
 
 # "main" function
 with open(sys.argv[1]) as fh:
     while line := fh.readline():
         if (re.search("\\d", line) != None):
             line = line[:len(line)-1]
-            # matriz.append(line[::-1])
             matriz.append(line)
         else:
             ops = line[:len(line)-1]
