@@ -41,9 +41,6 @@ for i in range(1, len(diagram)):
     
     # print(diagram[i])
     # print(split_ids)
-    for id in split_ids:
-        if id in beam_indexes:
-            res+=1
     
     new_beams = []
     for id in split_ids:
@@ -57,6 +54,6 @@ for i in range(1, len(diagram)):
     for beam in new_beams:
         if beam not in beam_indexes:
             beam_indexes.append(beam)
-
+            res+=1
     
 print(res)
